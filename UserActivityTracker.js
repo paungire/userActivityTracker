@@ -10,9 +10,9 @@ class UserActivityTracker {
 		this.trackClick = this.trackClick.bind(this);
 		this.trackScroll = this.trackScroll.bind(this);
 
-		this.clickFactor = 0.3;
-		this.scrollFactor = 0.01;
-		this.timesFactor = 0.1;
+		this.clickFactor = 0.2;
+		this.scrollFactor = 0.003;
+		this.timesFactor = 0.15;
 		this.loadStateFactors();
 
 		this.isStarted = this.getStateSarted();
@@ -21,14 +21,17 @@ class UserActivityTracker {
 		}
 
 		this.isHidden = this.getStateHidden();
+
+		this.executedFlags = this.getStateExecutedFlags();
+		this.timesInactive = 1; // минуты
 	}
 
-	trackClick() {
+	trackClick(e) {
 		this.clicks++;
 		this.saveState();
 	}
 
-	trackScroll() {
+	trackScroll(e) {
 		this.scrolls++;
 		this.saveState();
 	}
@@ -76,15 +79,15 @@ class UserActivityTracker {
 	getActivityLevel() {
 		const activityScore = this.calculateActivityScore();
 		if (activityScore >= 0 && activityScore <= 1.5) {
-			return "Activity 1";
+			return 1;
 		} else if (activityScore > 1.5 && activityScore <= 3) {
-			return "Activity 2";
+			return 2;
 		} else if (activityScore > 3 && activityScore <= 4.5) {
-			return "Activity 3";
+			return 3;
 		} else if (activityScore > 4.5 && activityScore <= 6) {
-			return "Activity 4";
+			return 4;
 		} else {
-			return "Activity 5";
+			return 5;
 		}
 	}
 
@@ -177,5 +180,122 @@ class UserActivityTracker {
 	hideToggle() {
 		this.isHidden = !this.isHidden;
 		this.saveStateHidden();
+	}
+
+	//* обработка метрики + события сбрасывания
+	checkLastCloseTime() {
+		const lastCloseTime = localStorage.getItem("lastCloseTime");
+
+		if (lastCloseTime) {
+			const currentTime = new Date().getTime();
+			const timeDiff = (currentTime - parseInt(lastCloseTime)) / (1000 * 60); // Разница в минутах
+
+			if (timeDiff > this.timesInactive) {
+				this.clearStateExecutedFlags();
+			}
+		}
+	}
+
+	setupBeforeUnload() {
+		window.addEventListener("beforeunload", () => {
+			localStorage.setItem("lastCloseTime", new Date().getTime());
+		});
+	}
+
+	setupInactivityTimer() {
+		let inactivityTimer;
+		const INACTIVITY_DELAY = this.timesInactive * 60 * 1000; // 30 минут в мс
+
+		function resetTimer() {
+			clearTimeout(inactivityTimer);
+			inactivityTimer = setTimeout(() => {
+				if (document.hidden) {
+					this.clearStateExecutedFlags();
+				}
+			}, INACTIVITY_DELAY);
+		}
+
+		// Сбрасываем таймер при любом взаимодействии
+		document.addEventListener("mousemove", resetTimer);
+		document.addEventListener("keydown", resetTimer);
+		document.addEventListener("scroll", resetTimer);
+		document.addEventListener("click", resetTimer);
+
+		// Запускаем таймер сразу
+		resetTimer();
+	}
+
+	setupTabActivityCheck() {
+		document.addEventListener("visibilitychange", () => {
+			if (document.hidden) {
+				// Вкладка неактивна — запускаем проверку через 30 минут
+				setTimeout(() => {
+					if (document.hidden) {
+						this.clearStateExecutedFlags();
+					}
+				}, this.timesInactive * 60 * 1000);
+			}
+		});
+	}
+
+	setupSendMetric() {
+		setTimeout(() => {
+			if (this.executedFlags[this.getActivityLevel()] === false) {
+				try {
+					ym(
+						this.metricCode,
+						"reachGoal",
+						"activity_" + this.getActivityLevel()
+					);
+					this.executedFlags[this.getActivityLevel()] = true;
+					this.setStateExecutedFlags();
+				} catch (error) {
+					console.error("Ошибка отправки метрики:", error);
+				}
+			}
+		}, 1000);
+	}
+
+	getStateExecutedFlags() {
+		const state = JSON.parse(
+			localStorage.getItem("userActivityTrackerExecutedFlags")
+		);
+		return state
+			? state
+			: {
+					1: false,
+					2: false,
+					3: false,
+					4: false,
+					5: false,
+			  };
+	}
+
+	setStateExecutedFlags() {
+		localStorage.setItem(
+			"userActivityTrackerExecutedFlags",
+			JSON.stringify(this.executedFlags)
+		);
+	}
+
+	clearStateExecutedFlags() {
+		localStorage.removeItem("userActivityTrackerExecutedFlags");
+		this.executedFlags = {
+			1: false,
+			2: false,
+			3: false,
+			4: false,
+			5: false,
+		};
+	}
+
+	// Запуск всех обработчиков
+	startAll() {
+		this.checkLastCloseTime();
+		this.setupBeforeUnload();
+		this.setupInactivityTimer();
+		this.setupTabActivityCheck();
+		this.setupSendMetric();
+		this.startTracking();
 	}
 }
