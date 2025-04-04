@@ -13,7 +13,6 @@ class UserActivityTracker {
 		this.clickFactor = 0.2;
 		this.scrollFactor = 0.003;
 		this.timesFactor = 0.15;
-		// this.loadStateFactors();
 
 		this.isStarted = this.getStateSarted();
 		if (this.isStarted) {
@@ -111,22 +110,6 @@ class UserActivityTracker {
 		}
 	}
 
-	// loadStateFactors() {
-	// 	const state = JSON.parse(
-	// 		localStorage.getItem("userActivityTrackerStateFactors")
-	// 	);
-	// 	if (state) {
-	// 		this.clickFactor = state.clickFactor;
-	// 		this.scrollFactor = state.scrollFactor;
-	// 		this.timesFactor = state.timesFactor;
-	// 	}
-	// }
-
-	// changeFactor(name, val) {
-	// 	this[name + "Factor"] = val;
-	// 	this.saveStateFactors();
-	// }
-
 	saveStateFactors() {
 		localStorage.setItem(
 			"userActivityTrackerStateFactors",
@@ -200,7 +183,6 @@ class UserActivityTracker {
 			const timeDiff = (currentTime - parseInt(lastCloseTime)) / (1000 * 60); // Разница в минутах
 
 			if (timeDiff > this.timesInactive) {
-				console.log("checkLastCloseTime");
 				this.clearStore();
 			}
 		}
@@ -215,7 +197,6 @@ class UserActivityTracker {
 	setupTabActivityCheck() {
 		document.addEventListener("visibilitychange", () => {
 			if (document.hidden) {
-				// Вкладка неактивна — запускаем проверку через 30 минут
 				setTimeout(() => {
 					if (document.hidden) {
 						console.log("setupTabActivityCheck");
@@ -230,12 +211,13 @@ class UserActivityTracker {
 		setInterval(() => {
 			if (this.executedFlags[this.getActivityLevel()] === false) {
 				try {
+					// TODO: на проде изменить - только для теста
 					// ym(
 					// 	this.metricCode,
 					// 	"reachGoal",
 					// 	"activity_" + this.getActivityLevel()
 					// );
-					console.log("activity_" + this.getActivityLevel());
+					console.info("activity_" + this.getActivityLevel());
 					this.executedFlags[this.getActivityLevel()] = true;
 					this.setStateExecutedFlags();
 				} catch (error) {
