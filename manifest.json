@@ -1,0 +1,22 @@
+{
+	"manifest_version": 3,
+	"name": "Активность пользователя",
+	"description": "Расширение для отслеживания активности пользователя",
+	"version": "0.1",
+	"action": {},
+	"icons": {
+		"16": "icon.png",
+		"32": "icon.png",
+		"48": "icon.png",
+		"128": "icon.png"
+	},
+	"permissions": ["activeTab", "scripting", "notifications", "contextMenus"],
+	"content_scripts": [
+		{
+			"css": ["content.css"],
+			"js": ["UserActivityTracker.js", "activeTab.js"],
+			"matches": ["<all_urls>"],
+			"all_frames": true
+		}
+	]
+}

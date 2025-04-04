@@ -1,0 +1,11 @@
+#activityTracker {
+	position: fixed;
+	top: 0;
+	right: 0;
+	width: 300px;
+	background-color: #ffffffc2;
+	backdrop-filter: blur(10px);
+	z-index: 9999;
+	border-radius: 12px;
+	padding: 10px;
+}
