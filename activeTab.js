@@ -1,6 +1,6 @@
-console.log(document.querySelector("#activityTracker"));
 if (!document.querySelector("#activityTracker")) {
 	const userTracker = new UserActivityTracker(89499315);
+	userTracker.startAll();
 
 	const activityTracker = document.createElement("div");
 	activityTracker.id = "activityTracker";
@@ -61,35 +61,62 @@ if (!document.querySelector("#activityTracker")) {
 	}, 1000);
 	activityTracker.appendChild(scrolls);
 
-	const changeClickFactorLabel = document.createElement("label");
-	changeClickFactorLabel.textContent = "Click Factor";
-	const changeClickFactor = document.createElement("input");
-	changeClickFactor.value = userTracker.clickFactor;
-	changeClickFactor.addEventListener("change", (e) => {
-		userTracker.changeFactor("click", e.target.value);
-	});
-	changeClickFactorLabel.appendChild(changeClickFactor);
-	activityTracker.appendChild(changeClickFactorLabel);
+	// const changeClickFactorLabel = document.createElement("label");
+	// changeClickFactorLabel.textContent = "Click Factor";
+	// const changeClickFactor = document.createElement("input");
+	// changeClickFactor.value = userTracker.clickFactor;
+	// changeClickFactor.addEventListener("change", (e) => {
+	// 	userTracker.changeFactor("click", e.target.value);
+	// });
+	// changeClickFactorLabel.appendChild(changeClickFactor);
+	// activityTracker.appendChild(changeClickFactorLabel);
 
-	const changeScrollFactorLabel = document.createElement("label");
-	changeScrollFactorLabel.textContent = "Scroll Factor";
-	const changeScrollFactor = document.createElement("input");
-	changeScrollFactor.value = userTracker.scrollFactor;
-	changeScrollFactor.addEventListener("change", (e) => {
-		userTracker.changeFactor("scroll", e.target.value);
-	});
-	changeScrollFactorLabel.appendChild(changeScrollFactor);
-	activityTracker.appendChild(changeScrollFactorLabel);
+	// const changeScrollFactorLabel = document.createElement("label");
+	// changeScrollFactorLabel.textContent = "Scroll Factor";
+	// const changeScrollFactor = document.createElement("input");
+	// changeScrollFactor.value = userTracker.scrollFactor;
+	// changeScrollFactor.addEventListener("change", (e) => {
+	// 	userTracker.changeFactor("scroll", e.target.value);
+	// });
+	// changeScrollFactorLabel.appendChild(changeScrollFactor);
+	// activityTracker.appendChild(changeScrollFactorLabel);
 
-	const changeTimesFactorLabel = document.createElement("label");
-	changeTimesFactorLabel.textContent = "Times Factor";
-	const changeTimesFactor = document.createElement("input");
-	changeTimesFactor.value = userTracker.timesFactor;
-	changeTimesFactor.addEventListener("change", (e) => {
-		userTracker.changeFactor("times", e.target.value);
-	});
-	changeTimesFactorLabel.appendChild(changeTimesFactor);
-	activityTracker.appendChild(changeTimesFactorLabel);
+	// const changeTimesFactorLabel = document.createElement("label");
+	// changeTimesFactorLabel.textContent = "Times Factor";
+	// const changeTimesFactor = document.createElement("input");
+	// changeTimesFactor.value = userTracker.timesFactor;
+	// changeTimesFactor.addEventListener("change", (e) => {
+	// 	userTracker.changeFactor("times", e.target.value);
+	// });
+	// changeTimesFactorLabel.appendChild(changeTimesFactor);
+	// activityTracker.appendChild(changeTimesFactorLabel);
+
+	//executedFlags
+	const execudet1 = document.createElement("div");
+	setInterval(() => {
+		execudet1.textContent = "flag1: " + userTracker.executedFlags["1"];
+	}, 1000);
+	activityTracker.appendChild(execudet1);
+	const execudet2 = document.createElement("div");
+	setInterval(() => {
+		execudet2.textContent = "flag2: " + userTracker.executedFlags["2"];
+	}, 1000);
+	activityTracker.appendChild(execudet2);
+	const execudet3 = document.createElement("div");
+	setInterval(() => {
+		execudet3.textContent = "flag3: " + userTracker.executedFlags["3"];
+	}, 1000);
+	activityTracker.appendChild(execudet3);
+	const execudet4 = document.createElement("div");
+	setInterval(() => {
+		execudet4.textContent = "flag4: " + userTracker.executedFlags["4"];
+	}, 1000);
+	activityTracker.appendChild(execudet4);
+	const execudet5 = document.createElement("div");
+	setInterval(() => {
+		execudet5.textContent = "flag5: " + userTracker.executedFlags["5"];
+	}, 1000);
+	activityTracker.appendChild(execudet5);
 
 	const btnHide = document.createElement("button");
 	btnHide.textContent = "Hide";

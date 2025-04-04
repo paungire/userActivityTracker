@@ -13,7 +13,7 @@ class UserActivityTracker {
 		this.clickFactor = 0.2;
 		this.scrollFactor = 0.003;
 		this.timesFactor = 0.15;
-		this.loadStateFactors();
+		// this.loadStateFactors();
 
 		this.isStarted = this.getStateSarted();
 		if (this.isStarted) {
@@ -111,21 +111,21 @@ class UserActivityTracker {
 		}
 	}
 
-	loadStateFactors() {
-		const state = JSON.parse(
-			localStorage.getItem("userActivityTrackerStateFactors")
-		);
-		if (state) {
-			this.clickFactor = state.clickFactor;
-			this.scrollFactor = state.scrollFactor;
-			this.timesFactor = state.timesFactor;
-		}
-	}
+	// loadStateFactors() {
+	// 	const state = JSON.parse(
+	// 		localStorage.getItem("userActivityTrackerStateFactors")
+	// 	);
+	// 	if (state) {
+	// 		this.clickFactor = state.clickFactor;
+	// 		this.scrollFactor = state.scrollFactor;
+	// 		this.timesFactor = state.timesFactor;
+	// 	}
+	// }
 
-	changeFactor(name, val) {
-		this[name + "Factor"] = val;
-		this.saveStateFactors();
-	}
+	// changeFactor(name, val) {
+	// 	this[name + "Factor"] = val;
+	// 	this.saveStateFactors();
+	// }
 
 	saveStateFactors() {
 		localStorage.setItem(
@@ -175,6 +175,15 @@ class UserActivityTracker {
 		this.clicks = 0;
 		this.scrolls = 0;
 		this.times = 0;
+
+		localStorage.removeItem("userActivityTrackerExecutedFlags");
+		this.executedFlags = {
+			1: false,
+			2: false,
+			3: false,
+			4: false,
+			5: false,
+		};
 	}
 
 	hideToggle() {
@@ -191,7 +200,8 @@ class UserActivityTracker {
 			const timeDiff = (currentTime - parseInt(lastCloseTime)) / (1000 * 60); // Разница в минутах
 
 			if (timeDiff > this.timesInactive) {
-				this.clearStateExecutedFlags();
+				console.log("checkLastCloseTime");
+				this.clearStore();
 			}
 		}
 	}
@@ -202,36 +212,14 @@ class UserActivityTracker {
 		});
 	}
 
-	setupInactivityTimer() {
-		let inactivityTimer;
-		const INACTIVITY_DELAY = this.timesInactive * 60 * 1000; // 30 минут в мс
-
-		function resetTimer() {
-			clearTimeout(inactivityTimer);
-			inactivityTimer = setTimeout(() => {
-				if (document.hidden) {
-					this.clearStateExecutedFlags();
-				}
-			}, INACTIVITY_DELAY);
-		}
-
-		// Сбрасываем таймер при любом взаимодействии
-		document.addEventListener("mousemove", resetTimer);
-		document.addEventListener("keydown", resetTimer);
-		document.addEventListener("scroll", resetTimer);
-		document.addEventListener("click", resetTimer);
-
-		// Запускаем таймер сразу
-		resetTimer();
-	}
-
 	setupTabActivityCheck() {
 		document.addEventListener("visibilitychange", () => {
 			if (document.hidden) {
 				// Вкладка неактивна — запускаем проверку через 30 минут
 				setTimeout(() => {
 					if (document.hidden) {
-						this.clearStateExecutedFlags();
+						console.log("setupTabActivityCheck");
+						this.clearStore();
 					}
 				}, this.timesInactive * 60 * 1000);
 			}
@@ -239,14 +227,15 @@ class UserActivityTracker {
 	}
 
 	setupSendMetric() {
-		setTimeout(() => {
+		setInterval(() => {
 			if (this.executedFlags[this.getActivityLevel()] === false) {
 				try {
-					ym(
-						this.metricCode,
-						"reachGoal",
-						"activity_" + this.getActivityLevel()
-					);
+					// ym(
+					// 	this.metricCode,
+					// 	"reachGoal",
+					// 	"activity_" + this.getActivityLevel()
+					// );
+					console.log("activity_" + this.getActivityLevel());
 					this.executedFlags[this.getActivityLevel()] = true;
 					this.setStateExecutedFlags();
 				} catch (error) {
@@ -278,24 +267,11 @@ class UserActivityTracker {
 		);
 	}
 
-	clearStateExecutedFlags() {
-		localStorage.removeItem("userActivityTrackerExecutedFlags");
-		this.executedFlags = {
-			1: false,
-			2: false,
-			3: false,
-			4: false,
-			5: false,
-		};
-	}
-
 	// Запуск всех обработчиков
 	startAll() {
 		this.checkLastCloseTime();
 		this.setupBeforeUnload();
-		this.setupInactivityTimer();
 		this.setupTabActivityCheck();
 		this.setupSendMetric();
-		this.startTracking();
 	}
 }
