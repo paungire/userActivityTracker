@@ -4,8 +4,11 @@ if (!document.querySelector("#activityTracker")) {
 
 	const activityTracker = document.createElement("div");
 	activityTracker.id = "activityTracker";
-
-	console.log(activityTracker);
+	if (userTracker.isHidden) {
+		activityTracker.style.display = "none";
+	} else {
+		activityTracker.style.display = "block";
+	}
 
 	const btnStart = document.createElement("button");
 	btnStart.textContent = "Start";
@@ -92,6 +95,7 @@ if (!document.querySelector("#activityTracker")) {
 	btnHide.textContent = "Hide";
 	btnHide.id = "btnHideActivityTracker";
 	btnHide.addEventListener("click", () => {
+		userTracker.hideToggle();
 		activityTracker.style.display =
 			activityTracker.style.display === "none" ? "block" : "none";
 	});

@@ -19,6 +19,8 @@ class UserActivityTracker {
 		if (this.isStarted) {
 			this.startTracking();
 		}
+
+		this.isHidden = this.getStateHidden();
 	}
 
 	trackClick() {
@@ -149,10 +151,31 @@ class UserActivityTracker {
 		return state ? state.isStarted : false;
 	}
 
+	saveStateHidden() {
+		localStorage.setItem(
+			"userActivityTrackerStateHidden",
+			JSON.stringify({
+				isHidden: this.isHidden,
+			})
+		);
+	}
+
+	getStateHidden() {
+		const state = JSON.parse(
+			localStorage.getItem("userActivityTrackerStateHidden")
+		);
+		return state ? state.isHidden : true;
+	}
+
 	clearStore() {
 		localStorage.removeItem("userActivityTrackerState");
 		this.clicks = 0;
 		this.scrolls = 0;
 		this.times = 0;
+	}
+
+	hideToggle() {
+		this.isHidden = !this.isHidden;
+		this.saveStateHidden();
 	}
 }
