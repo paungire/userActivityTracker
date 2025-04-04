@@ -8,7 +8,7 @@ if (!document.querySelector("#activityTracker")) {
 	console.log(activityTracker);
 
 	const btnStart = document.createElement("button");
-	btnStart.textContent = "Start Tracking";
+	btnStart.textContent = "Start";
 	btnStart.addEventListener("click", () => {
 		userTracker.startTracking();
 		console.log("Tracking started");
@@ -16,7 +16,7 @@ if (!document.querySelector("#activityTracker")) {
 	activityTracker.appendChild(btnStart);
 
 	const btnStop = document.createElement("button");
-	btnStop.textContent = "Stop Tracking";
+	btnStop.textContent = "Stop";
 	btnStop.addEventListener("click", () => {
 		userTracker.stopTracking();
 		console.log("Tracking stopped");
@@ -24,7 +24,7 @@ if (!document.querySelector("#activityTracker")) {
 	activityTracker.appendChild(btnStop);
 
 	const btnClear = document.createElement("button");
-	btnClear.textContent = "Clear Store";
+	btnClear.textContent = "Clear";
 	btnClear.addEventListener("click", () => {
 		userTracker.clearStore();
 		console.log("Store cleared");
@@ -88,11 +88,14 @@ if (!document.querySelector("#activityTracker")) {
 	changeTimesFactorLabel.appendChild(changeTimesFactor);
 	activityTracker.appendChild(changeTimesFactorLabel);
 
-	// const formula = document.createElement("div");
-	// setInterval(() => {
-	// 	formula.textContent = `Math.min(1 + Math.floor(${userTracker.times} / 15) * ${userTracker.timesFactor},2) * (${userTracker.clicks} * ${userTracker.clickFactor} + ${userTracker.scrolls} * ${userTracker.scrollFactor})`;
-	// }, 1000);
-	// activityTracker.appendChild(formula);
+	const btnHide = document.createElement("button");
+	btnHide.textContent = "Hide";
+	btnHide.id = "btnHideActivityTracker";
+	btnHide.addEventListener("click", () => {
+		activityTracker.style.display =
+			activityTracker.style.display === "none" ? "block" : "none";
+	});
+	document.body.appendChild(btnHide);
 
 	document.body.appendChild(activityTracker);
 }
