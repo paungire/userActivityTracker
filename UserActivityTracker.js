@@ -12,8 +12,8 @@ class UserActivityTracker {
 		this.trackScroll = this.trackScroll.bind(this);
 		this.trackMousemove = this.trackMousemove.bind(this);
 
-		this.clickFactor = 0.2;
-		this.scrollFactor = 0.003;
+		this.clickFactor = 0.15;
+		this.scrollFactor = 0.002;
 		this.timesFactor = 0.15;
 		this.mousemovesFactor = 0.0005;
 
