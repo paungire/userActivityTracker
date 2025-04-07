@@ -4,15 +4,18 @@ class UserActivityTracker {
 		this.clicks = 0;
 		this.scrolls = 0;
 		this.times = 0;
+		this.mousemoves = 0;
 		this.intervalId = null;
 		this.loadState();
 
 		this.trackClick = this.trackClick.bind(this);
 		this.trackScroll = this.trackScroll.bind(this);
+		this.trackMousemove = this.trackMousemove.bind(this);
 
 		this.clickFactor = 0.2;
 		this.scrollFactor = 0.003;
 		this.timesFactor = 0.15;
+		this.mousemovesFactor = 0.0005;
 
 		this.isStarted = this.getStateSarted();
 		if (this.isStarted) {
@@ -22,6 +25,7 @@ class UserActivityTracker {
 		this.isHidden = this.getStateHidden();
 
 		this.executedFlags = this.getStateExecutedFlags();
+		// TODO: на проде поменять на 30 минут
 		this.timesInactive = 1; // минуты
 	}
 
@@ -35,20 +39,28 @@ class UserActivityTracker {
 		this.saveState();
 	}
 
+	trackMousemove(e) {
+		this.mousemoves++;
+		this.saveState();
+	}
+
 	initEventListeners() {
 		document.addEventListener("click", this.trackClick);
 		document.addEventListener("scroll", this.trackScroll);
+		document.addEventListener("mousemove", this.trackMousemove);
 	}
 
 	removeEventListeners() {
 		document.removeEventListener("click", this.trackClick);
 		document.removeEventListener("scroll", this.trackScroll);
+		document.removeEventListener("mousemove", this.trackMousemove);
 	}
 
 	startTracking() {
 		this.isStarted = true;
 		this.saveStateActive();
 		this.initEventListeners();
+		clearInterval(this.intervalId);
 		this.intervalId = setInterval(() => {
 			this.times += 1;
 			this.saveState();
@@ -70,8 +82,10 @@ class UserActivityTracker {
 		);
 		const clicksCoefficient = this.clicks * this.clickFactor;
 		const scrollsCoefficient = this.scrolls * this.scrollFactor;
+		const mousemovesCoefficient = this.mousemoves * this.mousemovesFactor;
 		const activityScore =
-			timeCoefficient * (clicksCoefficient + scrollsCoefficient);
+			timeCoefficient *
+			(mousemovesCoefficient + clicksCoefficient + scrollsCoefficient);
 		return activityScore;
 	}
 
@@ -97,6 +111,7 @@ class UserActivityTracker {
 				clicks: this.clicks,
 				scrolls: this.scrolls,
 				times: this.times,
+				mousemoves: this.mousemoves,
 			})
 		);
 	}
@@ -107,6 +122,7 @@ class UserActivityTracker {
 			this.clicks = state.clicks;
 			this.scrolls = state.scrolls;
 			this.times = state.times;
+			this.mousemoves = state.mousemoves;
 		}
 	}
 
@@ -117,6 +133,7 @@ class UserActivityTracker {
 				clickFactor: this.clickFactor,
 				scrollFactor: this.scrollFactor,
 				timesFactor: this.timesFactor,
+				mousemovesFactor: this.mousemovesFactor,
 			})
 		);
 	}
@@ -158,6 +175,7 @@ class UserActivityTracker {
 		this.clicks = 0;
 		this.scrolls = 0;
 		this.times = 0;
+		this.mousemoves = 0;
 
 		localStorage.removeItem("userActivityTrackerExecutedFlags");
 		this.executedFlags = {

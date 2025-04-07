@@ -60,6 +60,11 @@ if (!document.querySelector("#activityTracker")) {
 		scrolls.textContent = "Scrolls: " + userTracker.scrolls;
 	}, 1000);
 	activityTracker.appendChild(scrolls);
+	const mousemoves = document.createElement("div");
+	setInterval(() => {
+		mousemoves.textContent = "Mousemoves: " + userTracker.mousemoves;
+	}, 1000);
+	activityTracker.appendChild(mousemoves);
 
 	// const changeClickFactorLabel = document.createElement("label");
 	// changeClickFactorLabel.textContent = "Click Factor";
