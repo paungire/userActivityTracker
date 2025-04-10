@@ -1,4 +1,4 @@
-![Project top picture](https://github.com/paungire/userActivityTracker/other/top_picture.jpg)
+![Project top picture](https://github.com/paungire/userActivityTracker/blob/main/other/top_picture.jpg)
 
 **Разрабатываем комплексное решение для анализа и визуализации пользовательской активности с интеграцией в Яндекс.Метрику**
 
